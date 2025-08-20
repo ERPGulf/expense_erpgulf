@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Expenses Entry",
+  "enabled": 1,
+  "modified": "2025-08-20 14:54:14.233128",
+  "module": "expense_erpgulf",
+  "name": "For Expense Entry",
+  "script": "frappe.ui.form.on(\"Expenses Entry\", {\r\n    custom_calculated_tax: function(frm) {\r\n        let taxable_total = 0;\r\n\r\n        // Sum debit of taxable rows\r\n        (frm.doc.accounts || []).forEach(row => {\r\n            if (row.custom_taxed) {\r\n                taxable_total += flt(row.debit || 0);\r\n            }\r\n        });\r\n\r\n        if (taxable_total <= 0) {\r\n            frappe.msgprint(__('No taxable rows found in Accounts table.'));\r\n            return;\r\n        }\r\n\r\n        if (!frm.doc.custom_tax_account) {\r\n            frappe.msgprint(__('Please set Tax Account in Custom Tax Account field.'));\r\n            return;\r\n        }\r\n\r\n        let tax_amount = flt(taxable_total * 0.15);\r\n\r\n        // check if tax row already exists\r\n        let tax_row = (frm.doc.accounts || []).find(r => r.account === frm.doc.custom_tax_account);\r\n\r\n        if (tax_row) {\r\n            // ✅ update existing row\r\n            frappe.model.set_value(tax_row.doctype, tax_row.name, \"debit\", tax_amount);\r\n            frappe.model.set_value(tax_row.doctype, tax_row.name, \"credit\", 0);\r\n        } else {\r\n            // ✅ create new row\r\n            let child = frm.add_child(\"accounts\");\r\n            frappe.model.set_value(child.doctype, child.name, \"account\", frm.doc.custom_tax_account);\r\n            frappe.model.set_value(child.doctype, child.name, \"debit_in_account_currency\", tax_amount);\r\n            frappe.model.set_value(child.doctype, child.name, \"credit\", 0);\r\n        }\r\n\r\n        frm.refresh_field(\"accounts\");\r\n\r\n        frappe.show_alert({\r\n            message: __(\"Calculated Tax row updated with Debit: {0}\", [tax_amount]),\r\n            indicator: \"green\"\r\n        });\r\n    }\r\n});\r\n",
+  "view": "Form"
+ }
+]
