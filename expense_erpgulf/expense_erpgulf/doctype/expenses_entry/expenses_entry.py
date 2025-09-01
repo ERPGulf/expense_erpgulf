@@ -192,7 +192,6 @@ class ExpensesEntry(AccountsController):
 		self.validate_cheque_info()
 		self.check_credit_limit()
 		self.make_gl_entries()
-		AccountsController.make_advance_payment_ledger_entries(self)
 		self.update_advance_paid()
 		self.update_asset_value()
 		self.update_inter_company_jv()
@@ -226,7 +225,7 @@ class ExpensesEntry(AccountsController):
 			"Advance Payment Ledger Entry",
 		)
 		self.make_gl_entries(1)
-		AccountsController.make_advance_payment_ledger_entries(self)
+	
 		self.update_advance_paid()
 		self.unlink_advance_entry_reference()
 		self.unlink_asset_reference()
