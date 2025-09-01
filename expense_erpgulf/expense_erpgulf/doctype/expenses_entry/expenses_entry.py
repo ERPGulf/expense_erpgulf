@@ -20,6 +20,7 @@ from erpnext.accounts.doctype.repost_accounting_ledger.repost_accounting_ledger 
 from erpnext.accounts.doctype.tax_withholding_category.tax_withholding_category import (
 	get_party_tax_withholding_details,
 )
+from erpnext.controllers.accounts_controller import AccountsController
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import (
 	cancel_exchange_gain_loss_journal,
@@ -191,7 +192,7 @@ class ExpensesEntry(AccountsController):
 		self.validate_cheque_info()
 		self.check_credit_limit()
 		self.make_gl_entries()
-		self.make_advance_payment_ledger_entries()
+		AccountsController.make_advance_payment_ledger_entries(self)
 		self.update_advance_paid()
 		self.update_asset_value()
 		self.update_inter_company_jv()
@@ -225,7 +226,7 @@ class ExpensesEntry(AccountsController):
 			"Advance Payment Ledger Entry",
 		)
 		self.make_gl_entries(1)
-		self.make_advance_payment_ledger_entries()
+		AccountsController.make_advance_payment_ledger_entries(self)
 		self.update_advance_paid()
 		self.unlink_advance_entry_reference()
 		self.unlink_asset_reference()
