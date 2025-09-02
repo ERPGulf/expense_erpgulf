@@ -200,7 +200,7 @@ class ExpensesEntry(AccountsController):
 
 	def on_update_after_submit(self):
 		# Flag will be set on Reconciliation
-		# Reconciliation tool will anyways repost ledger entries. So, no need to check and do implicit repost.
+		# Reconciliation tool will anyways repost ledger entries. So, no need to  check and do implicit repost.
 		if self.flags.get("ignore_reposting_on_reconciliation"):
 			return
 
